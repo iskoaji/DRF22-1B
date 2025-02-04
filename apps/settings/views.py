@@ -1,11 +1,15 @@
 from rest_framework.viewsets import GenericViewSet
-from apps.settings.models import Product
 from rest_framework import mixins
+from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
+
+from apps.settings.models import Product
 from apps.settings.serializer import ProductSerializer
+from apps.settings.pagination import ProductPagination
 
 # class ProductCreateView(CreateAPIView):
 #     queryset = Product.objects.all()
-#     serializer_class = ProductSerializer
+1#     serializer_class = ProductSerializer
 
 # class ProductListView(ListAPIView):
 #     queryset = Product.objects.all()
@@ -26,6 +30,11 @@ class ProductMixins(GenericViewSet,
                     mixins.DestroyModelMixin):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    pagination_class = ProductPagination
+
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    search_fields = ['title', 'description']
+    ordering_fields = ['-created_at']
 
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
